@@ -785,7 +785,19 @@ public class CoTCounter {
 		for (int i = 2; i <= 30; i++) {
 			CoTCounter cc = new CoTCounter("allNounAdjectiveVervAdverbCotsTremFreq" + i + ".json", i);
 			cc.cotCountArticlesNotMainTextNounAdjectiveVerbAdverb(jh);
-			System.out.println("r=" + i + " --> " + cc.map.size());
+			int counter = 0;
+			for (String str : cc.map.keySet()) {
+//				System.out.println(str);
+				String term1 = str.split(" ")[0];
+				String term2 = str.split(" ")[1];
+//				System.out.println(term1);
+//				System.out.println(term2);
+				int dFcot = cc.mapDocFreq.get(str);
+				if (dFcot > 1) {
+					counter++;
+				}
+			}
+			System.out.println("r=" + i + " --> " + counter);
 		}
 	}
 	

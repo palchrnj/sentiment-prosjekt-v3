@@ -39,13 +39,13 @@ public class MLArticle {
 	public double negativeCotsLead;
 	public double neutralCotsLead;
 	
-	public double isMonday;
-	public double isTuesday;
-	public double isWednesday;
-	public double isThursday;
-	public double isFriday;
-	public double isSaturday;
-	public double isSunday;
+	public double isMonday; //unused
+	public double isTuesday; //unused
+	public double isWednesday; //unused
+	public double isThursday; //unused
+	public double isFriday; //unused
+	public double isSaturday; //unused
+	public double isSunday; //unused
 	
 	public double isWeekday;
 	public double isWeekend;

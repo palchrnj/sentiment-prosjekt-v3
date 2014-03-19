@@ -40,9 +40,9 @@ public class MLMainClassPaperII {
 	
 	public static void main(String[] args) throws Exception {
 		
-//		writeArticlesToFiles();
+		writeArticlesToFiles();
 		
-		computeAndPrintResultsForLatexGraphs();
+//		computeAndPrintResultsForLatexGraphs();
 		
 //		computeAndPrintResultsForLatexTable();
 		
@@ -207,7 +207,39 @@ public class MLMainClassPaperII {
 		sigmas.add(new Integer(2000));
 		sigmas.add(new Integer(4000));
 		Collections.sort(sigmas);
-		for (int radius = 3; radius <= 8; radius = radius + 2) {
+		HashMap<Integer, Integer> cotCountMap = new HashMap<Integer, Integer>();
+		cotCountMap.put(2,2209);
+		cotCountMap.put(3, 3240);
+		cotCountMap.put(4, 4133);
+		cotCountMap.put(5, 4959);
+		cotCountMap.put(6, 5730);
+		cotCountMap.put(7, 6426);
+		cotCountMap.put(8, 7033);
+		ArrayList<Double> proportions = new ArrayList<Double>();
+		proportions.add(0.10);
+		proportions.add(0.30);
+		proportions.add(0.50);
+		for (int radius = 2; radius <= 8; radius = radius + 1) {
+			for (String function : functions) {
+				for (double proportion: proportions) {
+					int numberOfCotsToConsider =  (int) (proportion * cotCountMap.get(radius));
+					MLDataSet mldataset = getMLDataSet(jh, radius, function, numberOfCotsToConsider, "1111110000000111111111111");
+					writeMLDataSetToFile(mldataset, radius, function, proportion);
+					System.out.println(String.format("Done with r=%s, f=%s and p=%s ", radius, function, proportion));
+				}
+			}
+		}
+	}
+
+	public static void writeArticlesToFilesSigmas() throws Exception {
+		JsonHandler jh = new JsonHandler("/ArticleSteps/4_StemmedArticles/MainDataSetStemmed.json", "stemmed");
+		ArrayList<String> functions = new ArrayList<String>(Arrays.asList("tf", "idf", "tfidf", "mi", "chi"));
+		ArrayList<Integer> sigmas = new ArrayList<Integer>();
+		sigmas.add(new Integer(1000));
+		sigmas.add(new Integer(2000));
+		sigmas.add(new Integer(4000));
+		Collections.sort(sigmas);
+		for (int radius = 2; radius <= 8; radius = radius + 1) {
 			for (String function : functions) {
 				for (int sigma : sigmas) {
 					MLDataSet mldataset = getMLDataSet(jh, radius, function, sigma, "1111110000000111111111111");
@@ -218,7 +250,7 @@ public class MLMainClassPaperII {
 		}
 	}
 	
-	public static void writeMLDataSetToFile(MLDataSet mldataset, int radius, String function, int sigma) throws Exception {
+	public static void writeMLDataSetToFile(MLDataSet mldataset, int radius, String function, double proportion) throws Exception {
 		JsonHandler jh = new JsonHandler("/ArticleSteps/4_StemmedArticles/MainDataSetStemmed.json", "stemmed");
 		ArrayList<ArrayList<Double>> arrayList = MLArticle.wrapper(mldataset);
 		Gson gson = new Gson();
@@ -226,7 +258,24 @@ public class MLMainClassPaperII {
 		MLMainClassPaperII mlmcpii = new MLMainClassPaperII();
 		String path = String.format("%s/%s", System.getProperty("user.dir"), mlmcpii.getClass().getPackage().getName().replace(".", "/"));
 	    path = path.substring(0, path.length()-16);
-	    path = path + "/ArticleResources/MLDataSet/";
+	    path = path + "/ArticleResources/MLDataSetProportion/";
+		Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path+"r="+radius + "-f=" + function + "-p="+proportion+".json"), "UTF-8"));
+		try {
+			out.write(text);
+		} finally {
+			out.close();
+		}
+	}
+
+	public static void writeMLDataSetToFileSigmas(MLDataSet mldataset, int radius, String function, int sigma) throws Exception {
+		JsonHandler jh = new JsonHandler("/ArticleSteps/4_StemmedArticles/MainDataSetStemmed.json", "stemmed");
+		ArrayList<ArrayList<Double>> arrayList = MLArticle.wrapper(mldataset);
+		Gson gson = new Gson();
+		String text = gson.toJson(arrayList);
+		MLMainClassPaperII mlmcpii = new MLMainClassPaperII();
+		String path = String.format("%s/%s", System.getProperty("user.dir"), mlmcpii.getClass().getPackage().getName().replace(".", "/"));
+		path = path.substring(0, path.length()-16);
+		path = path + "/ArticleResources/MLDataSet/";
 		Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path+"r="+radius + "-f=" + function + "-s="+sigma+".json"), "UTF-8"));
 		try {
 			out.write(text);
